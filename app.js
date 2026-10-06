@@ -19,12 +19,14 @@
     toggleSteps: $('toggle-steps'), steps: $('steps'), appleMaps: $('apple-maps'),
   };
 
-  const map = L.map('map', { zoomControl: false }).setView([51.505, -0.09], 14);
+  const map = L.map('map', { zoomControl: false }).setView([40.7549, -73.9840], 15); // Midtown Manhattan
   L.control.zoom({ position: 'topright' }).addTo(map);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
+
+  const crime = initCrimeLayer(map);
 
   const pinIcon = (cls) => L.divIcon({ className: '', html: `<div class="pin ${cls}"></div>`, iconSize: [18, 18], iconAnchor: [9, 9] });
 
@@ -306,7 +308,8 @@
     navigator.geolocation.getCurrentPosition((pos) => {
       const ll = L.latLng(pos.coords.latitude, pos.coords.longitude);
       showMe(ll);
-      if (!points.from && !points.to) map.setView(ll, 15);
+      // Only jump to the user if they are in New York, where the police data is.
+      if (!points.from && !points.to && crime.nycBounds.contains(ll)) map.setView(ll, 16);
     }, () => {}, { timeout: 8000 });
   }
 })();

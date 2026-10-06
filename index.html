@@ -31,6 +31,17 @@
       </div>
     </form>
 
+    <div class="crime">
+      <label><input type="checkbox" id="crime-toggle" checked> NYPD reports, last 90 days</label>
+      <div class="legend" aria-hidden="true">
+        <span><i style="background:#d64545"></i>Felony</span>
+        <span><i style="background:#e8902a"></i>Misdemeanor</span>
+        <span><i style="background:#c9b02b"></i>Violation</span>
+      </div>
+      <label class="sub"><input type="checkbox" id="crime-indoor"> Include indoor reports</label>
+      <div id="crime-note" class="crime-note" aria-live="polite"></div>
+    </div>
+
     <div id="status" class="status" role="status" aria-live="polite"></div>
 
     <div id="summary" class="summary" hidden>
@@ -42,6 +53,7 @@
   </section>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="crime.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
