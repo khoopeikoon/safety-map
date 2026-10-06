@@ -16,7 +16,7 @@
     locate: $('locate'), swap: $('swap'), clear: $('clear'),
     status: $('status'), summary: $('summary'),
     sumTime: $('sum-time'), sumDist: $('sum-dist'),
-    toggleSteps: $('toggle-steps'), steps: $('steps'),
+    toggleSteps: $('toggle-steps'), steps: $('steps'), appleMaps: $('apple-maps'),
   };
 
   const map = L.map('map', { zoomControl: false }).setView([51.505, -0.09], 14);
@@ -197,6 +197,7 @@
     routeLayers = [];
     routes = [];
     ui.summary.hidden = true;
+    ui.appleMaps.hidden = true;
     ui.steps.hidden = true;
     ui.steps.innerHTML = '';
   }
@@ -242,8 +243,17 @@
     ui.sumTime.textContent = fmtTime(r.duration);
     ui.sumDist.textContent = fmtDist(r.distance);
     ui.summary.hidden = false;
+    ui.appleMaps.href = appleMapsUrl(points.from.latlng, points.to.latlng);
+    ui.appleMaps.hidden = false;
     renderSteps(r);
     if (fit) map.fitBounds(L.latLngBounds(r.geometry.coordinates.map(([lng, lat]) => [lat, lng])), { padding: [40, 40], paddingBottomRight: [0, window.innerWidth < 720 ? window.innerHeight * 0.35 : 0] });
+  }
+
+  // Hands the trip to Apple Maps for turn-by-turn walking navigation.
+  // On iPhone this opens the Maps app; elsewhere it opens maps.apple.com.
+  function appleMapsUrl(a, b) {
+    const ll = (p) => `${p.lat.toFixed(6)},${p.lng.toFixed(6)}`;
+    return `https://maps.apple.com/?saddr=${ll(a)}&daddr=${ll(b)}&dirflg=w`;
   }
 
   function describe(step) {

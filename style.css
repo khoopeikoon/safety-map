@@ -55,6 +55,11 @@ html, body { margin: 0; height: 100%; font-family: system-ui, -apple-system, "Se
 .summary { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-top: 1px solid var(--line); }
 .summary strong { font-size: 20px; }
 .summary span { color: var(--muted); margin-left: 6px; }
+.apple-btn {
+  display: block; text-align: center; margin: 0 0 10px; padding: 11px; border-radius: 10px;
+  background: var(--fg); color: var(--bg); font-size: 15px; font-weight: 600; text-decoration: none;
+}
+.apple-btn[hidden] { display: none; }
 .steps { margin: 0; padding: 0 0 0 22px; font-size: 14px; }
 .steps li { padding: 6px 0; border-top: 1px solid var(--line); }
 .steps li small { color: var(--muted); display: block; }
