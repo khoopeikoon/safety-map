@@ -26,6 +26,7 @@ function initCrimeLayer(map) {
   const layer = L.layerGroup().addTo(map);
 
   let since = null;        // ISO date string for the start of the window
+  let latestMs = 0;        // newest report in the dataset, for fading older dots
   let rangeLabel = '';
   let request = 0;
   let timer = null;
@@ -46,6 +47,7 @@ function initCrimeLayer(map) {
     const latest = new Date(row.latest);
     const start = new Date(latest.getTime() - WINDOW_DAYS * 864e5);
     since = start.toISOString().slice(0, 19);
+    latestMs = latest.getTime();
     rangeLabel = `${fmtDate(start)} to ${fmtDate(latest)}`;
   }
 
@@ -78,7 +80,7 @@ function initCrimeLayer(map) {
         const color = COLORS[r.law_cat_cd] || '#8a8a92';
         L.circleMarker([lat, lng], {
           renderer, radius: r.law_cat_cd === 'FELONY' ? 6 : 5,
-          color: '#fff', weight: 1, fillColor: color, fillOpacity: 0.85,
+          color: '#fff', weight: 1, opacity: ageOpacity(r), fillColor: color, fillOpacity: ageOpacity(r),
           pane: 'crime', bubblingMouseEvents: false, // tapping a dot should not drop a route pin
         }).bindPopup(popup(r)).addTo(layer);
       }
@@ -87,6 +89,14 @@ function initCrimeLayer(map) {
     } catch (_) {
       if (id === request) setNote('Could not load police reports. Try again in a moment.');
     }
+  }
+
+  // Newest reports are solid; ones at the start of the window fade to 0.2.
+  function ageOpacity(r) {
+    const t = Date.parse(r.cmplnt_fr_dt);
+    if (!t) return 0.2;
+    const age = Math.min(1, Math.max(0, (latestMs - t) / (WINDOW_DAYS * 864e5)));
+    return 0.9 - 0.7 * age;
   }
 
   function popup(r) {
